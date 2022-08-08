@@ -28,16 +28,19 @@ export const categories = [
     id: 1,
     img: "https://thekit.ca/wp-content/uploads/2021/01/2020-thekit.ca-feature-1-1200x1445.jpg",
     title: "SHIRT STYLE",
+    cat: "woman",
   },
   {
     id: 2,
     img: "https://images.squarespace-cdn.com/content/v1/5a5596188dd0411a8df1b41a/1611966720703-UAQKYPY0DZC05EH51XNN/Blush+Mark.jpg",
     title: "LOUNGEWEAR LOVE",
+    cat: "sneakers",
   },
   {
     id: 3,
     img: "https://i.insider.com/5f579acf7ed0ee001e25de4f?width=1000&format=jpeg&auto=webp",
     title: "LIGHT JACKETS",
+    cat: "man",
   },
 ];
 

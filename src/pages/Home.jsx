@@ -6,10 +6,11 @@ import Products from "../components/Products";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
+import { AnnouncementRounded } from "@mui/icons-material";
 const Home = () => {
   return (
     <div>
-      <Announcement />
+      <Announcement/>
       <Navbar />
       <Slider />
       <Categories />

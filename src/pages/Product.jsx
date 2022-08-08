@@ -1,11 +1,16 @@
 import { Add, Remove } from "@mui/icons-material";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
+import { publicRequest } from "../requestMethods";
 import { mobile } from "../responsive";
-
+import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addProduct } from "../redux/cartRedux";
+import { useSelector } from "react-redux";
 const Container = styled.div``;
 const Wrapper = styled.div`
   padding: 50px;
@@ -46,7 +51,7 @@ const FilterContainer = styled.div`
 `;
 
 const Filter = styled.div`
-  display: flex;
+  display: flexa;
   align-items: center;
 `;
 const FilterTitle = styled.span`
@@ -102,6 +107,37 @@ const Button = styled.button`
 `;
 
 const Product = () => {
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+  const [product, setProduct] = useState([]);
+  const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await publicRequest.get("/products/find/" + id);
+        setProduct(res.data);
+      } catch {}
+    };
+    getProduct();
+  }, [id]);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    dispatch(addProduct({ ...product, quantity, color, size }));
+  };
+
+  const handleQuantity = (type) => {
+    if (type === "dec") {
+      quantity > 1 && setQuantity(quantity - 1);
+    } else {
+      setQuantity(quantity + 1);
+    }
+  };
+
   return (
     <Container>
       <Navbar />
@@ -109,44 +145,39 @@ const Product = () => {
 
       <Wrapper>
         <ImgContainer>
-          <Image src="https://assets.myntassets.com/h_1440,q_90,w_1080/v1/assets/images/14739742/2022/2/8/dbeab14f-3fb3-4b56-b87c-87edc69a76e31644323419853-DressBerry-Women-Jumpsuit-2441644323419086-1.jpg"></Image>
+          <Image src={product.img}></Image>
         </ImgContainer>
 
         <InfoContainer>
-          <Title>Denim Jumpsuit</Title>
-          <Desc>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quam velit
-            saepe facilis voluptatibus libero cum voluptas amet et molestias,
-            itaque pariatur recusandae quibusdam quae officiis labore rerum,
-            molestiae eligendi cupiditate!
-          </Desc>
-          <Price>$20</Price>
+          <Title>{product.title}</Title>
+          <Desc>{product.desc}</Desc>
+          <Price>${product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="gray" />
+              {product.color?.map((c) => (
+                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
+              ))}
+              ;
             </Filter>
-            <Filter>
+
+            <Filter onChange={(e) => setSize(e.target.value)}>
               <FilterTitle>Size</FilterTitle>
               <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
+                {product.size?.map((s) => (
+                  <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                ))}
               </FilterSize>
             </Filter>
           </FilterContainer>
 
           <AddContainer>
             <AmountContainer>
-              <Remove />
-              <Amount>1</Amount>
-              <Add />
+              <Remove onClick={() => handleQuantity("dec")} />
+              <Amount>{quantity}</Amount>
+              <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button>ADD TO CART</Button>
+            <Button onClick={handleClick}>ADD TO CART</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>
